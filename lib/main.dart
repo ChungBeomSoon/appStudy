@@ -126,7 +126,7 @@ class MyApp extends StatelessWidget {
                               alignment:Alignment.centerLeft,
                               fit: BoxFit.fitHeight,
                             ),
-                          ),
+                          ), 
 
                           Container(
                             width: 300,
