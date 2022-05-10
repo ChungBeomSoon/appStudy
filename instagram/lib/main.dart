@@ -1,14 +1,24 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './style.dart' as style;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'page.dart';
+import 'widget.dart';
+import 'store.dart';
+
 void main() {
-  runApp(MaterialApp(theme: style.theme, home: MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(
+      create: (c) => Store1(),
+    ),
+    ChangeNotifierProvider(
+      create: (c) => Store2(),
+    )
+  ], child: MaterialApp(theme: style.theme, home: MyApp())));
 }
 
 class MyApp extends StatefulWidget {
@@ -77,7 +87,6 @@ class _MyAppState extends State<MyApp> {
                   });
                 });
               }
-
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -113,140 +122,5 @@ class _MyAppState extends State<MyApp> {
                 icon: Icon(Icons.shop_outlined), label: '샵'),
           ]),
     );
-  }
-}
-
-class home extends StatefulWidget {
-  home({Key? key, this.data, this.getNewData, this.userImage})
-      : super(key: key);
-  var data;
-  final getNewData;
-  final userImage;
-  @override
-  State<home> createState() => _homeState();
-}
-
-class _homeState extends State<home> {
-  final textbold = TextStyle(fontWeight: FontWeight.bold);
-
-  var scroll = ScrollController();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    scroll.addListener(() {
-      if (scroll.position.pixels == scroll.position.maxScrollExtent) {
-        widget.getNewData();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.data.isNotEmpty) {
-      return ListView.builder(
-        itemCount: widget.data.length,
-        controller: scroll,
-        itemBuilder: (c, i) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ImageSelect(data: widget.data, i: i),
-              Text(
-                '좋아요' + widget.data[i]['likes'].toString(),
-                style: textbold,
-                textAlign: TextAlign.left,
-              ),
-              Text(
-                widget.data[i]['user'],
-                textAlign: TextAlign.left,
-              ),
-              Text(
-                widget.data[i]['content'],
-                textAlign: TextAlign.left,
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      return Text('loading..');
-    }
-  }
-}
-
-class Upload extends StatelessWidget {
-  Upload(
-      {Key? key, this.userImage, this.uploadData, this.uploadImage, this.data})
-      : super(key: key);
-  final userImage;
-  var uploadData;
-  var uploadImage;
-  final data;
-  final textController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  uploadData();
-                  uploadImage['content'] = textController.text;
-                  print(userImage);
-                },
-                child: Text('Upload'))
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.file(
-                userImage,
-                fit: BoxFit.fitWidth,
-                width: 420,
-                height: 420,
-              ),
-              TextField(
-                decoration:
-                    InputDecoration.collapsed(hintText: '여기에 글을 입력해주세요.'),
-                controller: textController,
-              ),
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.close)),
-            ],
-          ),
-        ));
-  }
-}
-
-class ImageSelect extends StatefulWidget {
-  ImageSelect({Key? key, this.data, this.i}) : super(key: key);
-  var data;
-  var i;
-
-  @override
-  State<ImageSelect> createState() => _ImageSelectState();
-}
-
-class _ImageSelectState extends State<ImageSelect> {
-  @override
-  Widget build(BuildContext context) {
-    if (widget.data[widget.i]['image'].toString().startsWith('File')) {
-      return Image.file(
-        widget.data[widget.i]['image'],
-        fit: BoxFit.fitWidth,
-        width: 420,
-        height: 420,
-      );
-    } else {
-      return Image.network(widget.data[widget.i]['image']);
-    }
   }
 }
