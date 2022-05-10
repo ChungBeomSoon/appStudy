@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:assignment2/appbar.dart';
 import 'package:assignment2/searchbar.dart';
 import 'package:assignment2/mainmenu.dart';
-import 'package:assignment2/pageview.dart';
 import 'package:assignment2/submenu.dart';
 import 'package:assignment2/bottom.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter/rendering.dart';
-import 'dart:io';
 
 void main() {
   runApp(const MyApp());
